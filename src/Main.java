@@ -8,6 +8,6 @@ public class Main {
                                             {"r", "r", "r", "a"}};
 
     public static void main(String[] args) throws IOException {
-        Engine engine = new Engine(input, minLength); // launches the program
+        Engine engine = new Engine(minLength); // launches the program
     }
 }

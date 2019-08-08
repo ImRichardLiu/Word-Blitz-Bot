@@ -1,3 +1,6 @@
+import edu.princeton.cs.introcs.StdDraw;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,14 +11,92 @@ public class Engine {
     public Board board;
     public Set<String> words; // stores words
     public Queue<Word> combinations; // stores all possible combinations of char sequences
+    private boolean gameGoing = false;
+    private boolean start = true;
+    private String input;
+    private int minLength;
+    private boolean found = false;
+
 
     /**
      * Engine constructor is the main loop of the bot.
      */
-    public Engine(String[][] input, int minLength) throws IOException {
+    public Engine(int minLength) throws IOException {
         words = new HashSet<>();
         combinations = new LinkedList<>();
-        board = new Board(input);
+        this.minLength = minLength;
+        gameLoop();
+        /* System.out.println("Words that exist are:");
+        for (String s: words) {
+            System.out.println(s);
+        } */
+    }
+    public void gameLoop() throws IOException {
+        while (true) {
+            if (!gameGoing) {
+                initialize();
+                enterString();
+                gameGoing = true;
+            }
+            if (gameGoing) {
+                StdDraw.clear(Color.BLACK);
+                if (!found) {
+                    StdDraw.text(2.5, 2.5, "Finding words...");
+                    StdDraw.show();
+                    findWords();
+                    displayWords();
+                    found = true;
+                }
+                if (StdDraw.hasNextKeyTyped()) {
+                    gameGoing = false;
+                }
+            }
+        }
+    }
+
+    private void initialize() {
+        StdDraw.setCanvasSize(512, 512);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font font = new Font("Calibri Light", Font.PLAIN, 16);
+        StdDraw.setXscale(0, 5);
+        StdDraw.setYscale(0, 5);
+        StdDraw.setFont(font);
+    }
+
+    private void enterString() {
+        StdDraw.text(2.5, 3.25, "Enter letters: ");
+        StdDraw.enableDoubleBuffering();
+        while (StdDraw.hasNextKeyTyped()) {
+            StdDraw.nextKeyTyped();
+        }
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                Character letter = Character.toUpperCase(StdDraw.nextKeyTyped());
+                if (start == true) {
+                    this.input = String.valueOf(letter);
+                    start = false;
+                    StdDraw.clear(Color.BLACK);
+                    StdDraw.text(2.5, 3.25, "Enter letters: ");
+                    StdDraw.text(2.5, 2, this.input);
+                    StdDraw.show();
+                } else {
+                    this.input += String.valueOf(letter);
+                    StdDraw.clear(Color.BLACK);
+                    StdDraw.text(2.5, 3.25, "Enter letters: ");
+                    StdDraw.text(2.5, 2, this.input);
+                    StdDraw.show();
+                    if (this.input.length() == 16) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void findWords() throws IOException{
+        Matrix matrix = new Matrix(this.input);
+        board = new Board(matrix);
         addSingleLetters();
         int length = 1;
         WordChecker check = new WordChecker();
@@ -27,10 +108,21 @@ public class Engine {
         while (!combinations.isEmpty()) {
             System.out.println(combinations.remove().getWord());
         }
-        /* System.out.println("Words that exist are:");
-        for (String s: words) {
-            System.out.println(s);
-        } */
+    }
+
+    private void displayWords() {
+        StdDraw.clear(Color.BLACK);
+        int i = 0;
+        for (String word : words) {
+            double x = 0.25;
+            double y = 5 - (i % 10) * 0.5;
+            if (i >= 10) {
+                x = 2.75;
+            }
+            StdDraw.text(x, y, word);
+            StdDraw.show();
+            i++;
+        }
     }
 
     /**
@@ -59,6 +151,7 @@ public class Engine {
     public void calculate(int length, WordChecker check, boolean minLen) {
         Word curr = combinations.peek();
         String currWord = curr.getWord();
+        System.out.println(currWord);
         while (currWord.length() == length) { // runs as long as specified length is correct
             curr = combinations.remove();
             addLetterToWords(curr, check, minLen);
@@ -131,5 +224,4 @@ public class Engine {
     public boolean verifyLoc(int x, int y) {
         return (x >= 0 && x < 4) && (y >= 0 && y < 4);
     }
-
 }

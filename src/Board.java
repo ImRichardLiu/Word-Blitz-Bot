@@ -1,12 +1,12 @@
 public class Board {
-    public String[][] charBoard;
+    public Matrix charBoard;
 
-    public Board(String[][] input) {
+    public Board(Matrix input) {
         charBoard = input;
     }
 
 
     public String get(int i, int j) {
-        return charBoard[i][j];
+        return charBoard.getChar(i, j);
     }
 }
