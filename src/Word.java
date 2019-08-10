@@ -3,6 +3,7 @@ public class Word {
     public int locX;
     public int locY;
     public Boolean[][] boolBoard;
+    public int[] path;
 
     public Word(StringBuilder input, int x, int y, Boolean[][] usedBoard) {
         word = input;
@@ -44,5 +45,9 @@ public class Word {
 
     public boolean unused(int currX, int currY) {
         return boolBoard[currX][currY] == false;
+    }
+
+    public String getPath() {
+        return "";
     }
 }

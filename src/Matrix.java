@@ -10,10 +10,12 @@ public class Matrix {
 
     private void stringToMatrix() {
         int row = 0;
+        int counter = 0;
         while (row < 4) {
             for (int i = 0; i < 4; i++) {
-                Character first = input.charAt(i);
+                Character first = input.charAt(counter);
                 matrix[row][i] = first;
+                counter++;
             }
             row++;
         }
