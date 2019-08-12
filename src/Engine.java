@@ -8,7 +8,8 @@ import java.util.Queue;
 
 public class Engine {
     public Board board;
-    public HashMap<Integer, String> words; // stores words
+    public HashMap<Integer, String> wordString; // stores words
+    public HashMap<Integer, Word> words;
     public Queue<Word> combinations; // stores all possible combinations of char sequences
     private boolean gameGoing = false;
     private boolean start = true;
@@ -23,6 +24,7 @@ public class Engine {
      */
     public Engine(int minLength) throws IOException {
         words = new HashMap<>();
+        wordString = new HashMap<>();
         combinations = new LinkedList<>();
         this.minLength = minLength;
         WordChecker check = new WordChecker();
@@ -123,17 +125,24 @@ public class Engine {
         int curr = 0;
         int count = 0;
         while (count < num) {
-            String word = "";
+            Word word = null;
             for (int i = key; i >= 0; i--) {
                 if (words.containsKey(i)) {
                     word = words.remove(i);
-                    System.out.println(word);
+                    System.out.println(word.getWord());
                     break;
                 }
             }
             double x = 0.4 + (4.9 / cols) * curr;
-            double y  = 4.75 - (count % 10) * 0.5;
-            StdDraw.text(x, y, word);
+            double y  = 4.85 - (count % 10) * 0.5;
+            Font font = new Font("Calibri Light", Font.PLAIN, 16);
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.text(x, y, word.getWord());
+            font = new Font("Calibri Light", Font.PLAIN, 10);
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.CYAN);
+            StdDraw.text(x + 0.05, y - 0.25, word.path());
             StdDraw.show();
             count += 1;
             if (count != 0 && count % 10 == 0) {
@@ -143,6 +152,7 @@ public class Engine {
 
         System.out.println(count);
     }
+
 
     /**
      * Make Word objects from the initial letters and puts it into combinations queue.
@@ -156,7 +166,8 @@ public class Engine {
                                         {false, false, false, false}};
                 StringBuilder str = new StringBuilder();
                 str.append(board.get(i, j));
-                Word input = new Word(str, i, j, usedBoard);
+                LinkedList<Integer> path = new LinkedList<>();
+                Word input = new Word(str, i, j, usedBoard, path);
                 // Word input = new Word(str, i, j);
                 combinations.add(input);
             }
@@ -224,14 +235,15 @@ public class Engine {
                 if (curr.unused(x, y)) {
                     StringBuilder newBuilder = new StringBuilder(builder);
                     newBuilder.append(board.get(x, y));
-                    Word w = new Word(newBuilder, x, y, curr.getBoardCopy());
+                    Word w = new Word(newBuilder, x, y, curr.getBoardCopy(), curr.getPath());
                     // Word w = new Word(newBuilder, x, y);
                     String str = w.getWord();
                     if (str.length() != 16) {
                         combinations.add(w);
                     }
-                    if (check.contains(str) && minLen && !words.containsValue(str)) {
-                        words.put(key, str);
+                    if (check.contains(w.getWord()) && minLen && !wordString.containsValue(str)) {
+                        wordString.put(key, str);
+                        words.put(key, w);
                         key++;
                     }
                 }

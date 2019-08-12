@@ -1,16 +1,20 @@
+import java.util.LinkedList;
+
 public class Word {
     public StringBuilder word;
     public int locX;
     public int locY;
     public Boolean[][] boolBoard;
-    public int[] path;
+    public LinkedList<Integer> path;
 
-    public Word(StringBuilder input, int x, int y, Boolean[][] usedBoard) {
+    public Word(StringBuilder input, int x, int y, Boolean[][] usedBoard, LinkedList<Integer> path) {
         word = input;
         locX = x;
         locY = y;
         boolBoard = usedBoard;
         boolBoard[x][y] = true;
+        this.path = path;
+        this.path.add(4*y + x);
     }
     /*
     public Word(StringBuilder input, int x, int y) {
@@ -47,7 +51,18 @@ public class Word {
         return boolBoard[currX][currY] == false;
     }
 
-    public String getPath() {
-        return "";
+    public LinkedList<Integer> getPath() {
+        return this.path;
+    }
+
+    public String path() {
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            ret.append(path.get(i));
+            if (i != word.length() - 1) {
+                ret.append(",");
+            }
+        }
+        return ret.toString();
     }
 }
