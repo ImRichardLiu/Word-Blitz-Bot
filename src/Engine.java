@@ -43,19 +43,27 @@ public class Engine {
                 enterString();
                 gameGoing = true;
             }
-            if (gameGoing) {
+            while (gameGoing) {
                 StdDraw.clear(Color.BLACK);
                 if (!found) {
+                    StdDraw.setPenColor(Color.WHITE);
+                    Font font = new Font("Calibri Light", Font.PLAIN, 16);
+                    StdDraw.setFont(font);
                     StdDraw.text(2.5, 2.5, "Finding words...");
                     StdDraw.show();
                     findWords(check);
                     displayWords();
                     found = true;
                 }
-                if (StdDraw.hasNextKeyTyped()) {
+                if (StdDraw.isKeyPressed(32)) {
                     gameGoing = false;
                     input = "";
                     found = false;
+                    words = new HashMap<>();
+                    combinations = new LinkedList<>();
+                    wordString = new HashMap<>();
+                    key = 0;
+                    start = true;
                 }
             }
         }
@@ -118,6 +126,11 @@ public class Engine {
     private void displayWords() {
         StdDraw.clear(Color.BLACK);
         int num = words.size();
+        if (num == 0) {
+            StdDraw.clear(Color.BLACK);
+            StdDraw.text(2.5, 2.5, "no words found");
+            StdDraw.show();
+        }
         int cols = Math.floorDiv(num, 10);
         if (num % 10 > 0) {
             cols += 1;
@@ -196,6 +209,7 @@ public class Engine {
      * Adds new character from every possible direction of current word.
      */
     public void addLetterToWords(Word curr, WordChecker check, boolean minLen) {
+        LinkedList<Integer> path = curr.getPath();
         for (int dir = 1; dir <= 8; dir++) {
             StringBuilder builder = curr.getBuilder();
             int x = curr.getX(), y = curr.getY();
@@ -235,7 +249,7 @@ public class Engine {
                 if (curr.unused(x, y)) {
                     StringBuilder newBuilder = new StringBuilder(builder);
                     newBuilder.append(board.get(x, y));
-                    Word w = new Word(newBuilder, x, y, curr.getBoardCopy(), curr.getPath());
+                    Word w = new Word(newBuilder, x, y, curr.getBoardCopy(), path);
                     // Word w = new Word(newBuilder, x, y);
                     String str = w.getWord();
                     if (str.length() != 16) {

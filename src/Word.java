@@ -7,14 +7,17 @@ public class Word {
     public Boolean[][] boolBoard;
     public LinkedList<Integer> path;
 
-    public Word(StringBuilder input, int x, int y, Boolean[][] usedBoard, LinkedList<Integer> path) {
+    public Word(StringBuilder input, int x, int y, Boolean[][] usedBoard, LinkedList<Integer> prevPath) {
         word = input;
         locX = x;
         locY = y;
         boolBoard = usedBoard;
         boolBoard[x][y] = true;
-        this.path = path;
-        this.path.add(4*y + x);
+        this.path = new LinkedList<>();
+        for (int i = 0; i < prevPath.size(); i++) {
+            this.path.add(prevPath.get(i));
+        }
+        this.path.add(4*x + y);
     }
     /*
     public Word(StringBuilder input, int x, int y) {
@@ -57,9 +60,9 @@ public class Word {
 
     public String path() {
         StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < word.length(); i++) {
+        for (int i = 0; i < path.size(); i++) {
             ret.append(path.get(i));
-            if (i != word.length() - 1) {
+            if (i != path.size() - 1) {
                 ret.append(",");
             }
         }
