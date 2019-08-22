@@ -1,6 +1,7 @@
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,12 +18,14 @@ public class Engine {
     private int minLength;
     private boolean found = false;
     private int key = 0;
+    private Robot cursor;
 
 
     /**
      * Engine constructor is the main loop of the bot.
      */
-    public Engine(int minLength) throws IOException {
+    public Engine(int minLength) throws IOException, AWTException, InterruptedException {
+        cursor = new Robot();
         words = new HashMap<>();
         wordString = new HashMap<>();
         combinations = new LinkedList<>();
@@ -34,7 +37,7 @@ public class Engine {
             System.out.println(s);
         } */
     }
-    public void gameLoop(WordChecker check) {
+    public void gameLoop(WordChecker check) throws InterruptedException{
         while (true) {
             if (!gameGoing) {
                 if (start) {
@@ -123,7 +126,7 @@ public class Engine {
         System.out.println(words.size());
     }
 
-    private void displayWords() {
+    private void displayWords() throws InterruptedException{
         StdDraw.clear(Color.BLACK);
         int num = words.size();
         if (num == 0) {
@@ -142,7 +145,6 @@ public class Engine {
             for (int i = key; i >= 0; i--) {
                 if (words.containsKey(i)) {
                     word = words.remove(i);
-                    System.out.println(word.getWord());
                     break;
                 }
             }
@@ -157,6 +159,7 @@ public class Engine {
             StdDraw.setPenColor(Color.CYAN);
             StdDraw.text(x + 0.05, y - 0.25, word.path());
             StdDraw.show();
+            tracePath(word);
             count += 1;
             if (count != 0 && count % 10 == 0) {
                 curr += 1;
@@ -164,6 +167,22 @@ public class Engine {
         }
 
         System.out.println(count);
+    }
+
+    private void tracePath(Word word) throws InterruptedException{
+        int x;
+        int y;
+        for (int i = 0; i < word.getPath().size(); i++) {
+            int tempX = Math.floorDiv(word.getPath().get(i), 4) ;
+            int tempY = word.getPath().get(i) % 4;
+            x = tempX * 100;
+            y = tempY * 100;
+            cursor.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            cursor.mouseMove(x, y);
+            cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            Thread.sleep(100);
+            System.out.println(i);
+        }
     }
 
 

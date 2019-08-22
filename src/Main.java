@@ -1,4 +1,7 @@
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.IOException;
+
 
 public class Main {
     public static final int minLength = 3;
@@ -7,7 +10,7 @@ public class Main {
                                             {"a", "e", "n", "s"},
                                             {"r", "r", "r", "a"}};
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
         Engine engine = new Engine(minLength); // launches the program
     }
 }
