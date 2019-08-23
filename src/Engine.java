@@ -149,6 +149,9 @@ public class Engine {
         int curr = 0;
         int count = 0;
         while (count < num) {
+            if (StdDraw.hasNextKeyTyped()) {
+                break;
+            }
             Word word = null;
             for (int i = key; i >= 0; i--) {
                 if (words.containsKey(i)) {
@@ -192,8 +195,7 @@ public class Engine {
             } else {
                 cursor.mouseMove(x, y);
             }
-            cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            Thread.sleep(100);
+            Thread.sleep(1000);
         }
         cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
