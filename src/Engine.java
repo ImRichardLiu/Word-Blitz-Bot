@@ -195,7 +195,7 @@ public class Engine {
             } else {
                 cursor.mouseMove(x, y);
             }
-            Thread.sleep(1000);
+            Thread.sleep(100);
         }
         cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
