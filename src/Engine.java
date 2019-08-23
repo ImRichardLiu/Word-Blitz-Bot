@@ -19,6 +19,7 @@ public class Engine {
     private boolean found = false;
     private int key = 0;
     private Robot cursor;
+    private final int limit = 70;
 
 
     /**
@@ -99,7 +100,14 @@ public class Engine {
                     StdDraw.text(2.5, 3.25, "Enter letters: ");
                     StdDraw.text(2.5, 2, this.input);
                     StdDraw.show();
-                } else {
+                } else if (StdDraw.isKeyPressed(8)) {
+                    input = input.substring(0, input.length() - 1);
+                    StdDraw.clear(Color.BLACK);
+                    StdDraw.text(2.5, 3.25, "Enter letters: ");
+                    StdDraw.text(2.5, 2, this.input);
+                    StdDraw.show();
+                }
+                else {
                     this.input += String.valueOf(letter);
                     StdDraw.clear(Color.BLACK);
                     StdDraw.text(2.5, 3.25, "Enter letters: ");
@@ -128,7 +136,7 @@ public class Engine {
 
     private void displayWords() throws InterruptedException{
         StdDraw.clear(Color.BLACK);
-        int num = words.size();
+        int num = Math.min(words.size(), limit);
         if (num == 0) {
             StdDraw.clear(Color.BLACK);
             StdDraw.text(2.5, 2.5, "no words found");
@@ -173,16 +181,21 @@ public class Engine {
         int x;
         int y;
         for (int i = 0; i < word.getPath().size(); i++) {
-            int tempX = Math.floorDiv(word.getPath().get(i), 4) ;
-            int tempY = word.getPath().get(i) % 4;
-            x = tempX * 100;
-            y = tempY * 100;
-            cursor.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            cursor.mouseMove(x, y);
+            int tempY = Math.floorDiv(word.getPath().get(i), 4) ;
+            int tempX = word.getPath().get(i) % 4;
+            System.out.print("(" + tempX + "," + tempY + ") ");
+            x = 465 + tempX * 110;
+            y = 475 + tempY * 110;
+            if (i == 0) {
+                cursor.mouseMove(x, y);
+                cursor.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            } else {
+                cursor.mouseMove(x, y);
+            }
             cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             Thread.sleep(100);
-            System.out.println(i);
         }
+        cursor.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
 
 
